@@ -303,9 +303,8 @@ public class TVSet {
 ---
 
 
-## Question 3: Write a Singleton design code
+## Question 3: Multiply all other elements except itself.
 
-Multiply all other elements except itself.
 Input:
 
 [2, 5, 3, 1]
