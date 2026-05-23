@@ -419,4 +419,61 @@ public class Main {
 
 ---
 
-Question 6: 
+
+## Question 6:
+
+Given an amount (e.g., 90) and available coin denominations (e.g., 50, 20, 10, 5, 2, 1), write a program to find the minimum number of coins required to form the given amount.
+
+---
+
+##  Answer (Java Code using Greedy Approach):
+
+```java
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        int amount = 90;
+        int[] coins = {50, 20, 10, 5, 2, 1};
+
+        List<Integer> result = new ArrayList<>();
+
+        for (int coin : coins) {
+
+            while (amount >= coin) {
+                amount -= coin;
+                result.add(coin);
+            }
+        }
+
+        System.out.println("Coins used: " + result);
+        System.out.println("Total coins: " + result.size());
+    }
+}
+```
+
+---
+
+## 📌 Output:
+
+```
+Coins used: [50, 20, 20]
+Total coins: 3
+```
+
+---
+
+## 💡 Explanation:
+
+The solution uses a greedy approach where we always pick the largest possible coin first. For amount 90, we select:
+50 + 20 + 20 = 90
+
+This approach works efficiently for standard currency systems like Indian denominations.
+
+---
+
+## ⚠️ Note:
+
+Greedy works only for specific coin systems. For arbitrary coin sets, Dynamic Programming is required to guarantee the minimum number of coins.
