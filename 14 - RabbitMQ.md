@@ -365,4 +365,80 @@ Best For	Task processing, notifications	Large-scale event streaming
 
 Interview Answer (2-minute Summary)
 
-RabbitMQ is a message broker used for asynchronous communication between applications. In Spring Boot, producers publish messages to exchanges or queues, and consumers process them independently using @RabbitListener. It helps decouple microservices, improve scalability, handle failures gracefully, and process background tasks such as order processing, notifications, report generation, and payment events. In my projects, I would use RabbitMQ when a task does not need an immediate response and can be processed asynchronously, improving application performance and reliability.
+RabbitMQ is a message broker used for asynchronous communication between applications. In Spring Boot, producers publish messages to exchanges or queues, and consumers process them independently using @RabbitListener. It helps decouple microservices, improve scalability, handle failures gracefully, and process background tasks such as order processing, notifications, report generation, and payment events. In my projects, I would use RabbitMQ when a task does not need an immediate response and can be processed asynchronously, improving application performance and Yes.
+
+@Async in Spring Boot uses multithreading behind the scenes.
+
+When you annotate a method with @Async, Spring submits that method to a Task Executor (typically a thread pool), and the method runs on a different thread instead of the thread that handled the request.
+
+Example
+
+@RestController
+public class UserController {
+    @Autowired
+    private EmailService emailService;
+    @PostMapping("/register")
+    public String register() {
+        System.out.println("Main Thread: "
+                + Thread.currentThread().getName());
+        emailService.sendEmail();
+        return "User Registered";
+    }
+}
+@Service
+public class EmailService {
+    @Async
+    public void sendEmail() {
+        System.out.println("Async Thread: "
+                + Thread.currentThread().getName());
+        // send email
+    }
+}
+
+Output:
+
+Main Thread: http-nio-8080-exec-1
+Async Thread: task-1
+
+Notice that the async method runs on a different thread.
+
+By default
+
+Spring creates a thread pool for async tasks. You can customize it:
+
+@Configuration
+@EnableAsync
+public class AsyncConfig {
+    @Bean
+    public Executor taskExecutor() {
+        ThreadPoolTaskExecutor executor =
+                new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(50);
+        executor.initialize();
+        return executor;
+    }
+}
+
+Interview follow-up
+
+Q: Is @Async creating a new thread every time?
+
+Not usually. It typically uses a thread pool, which reuses existing threads. Creating a new thread for every task would be expensive.
+
+Q: Is @Async parallel processing?
+
+Yes. If multiple async tasks are submitted and there are available threads in the pool, they can run in parallel.
+
+Q: Does RabbitMQ also use threads?
+
+Yes, but differently:
+
+* @Async uses threads inside your application.
+* RabbitMQ uses a message queue; consumers then use threads to process messages. The key difference is that the work is first persisted in a queue and can be handled by separate applications or services.
+
+So a simple interview answer is:
+
+“@Async is based on multithreading. Spring executes the annotated method in a separate thread from a thread pool, allowing the caller to continue without waiting for the method to finish.”
+
