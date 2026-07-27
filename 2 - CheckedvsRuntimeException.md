@@ -103,13 +103,13 @@ Unchecked Exceptions
 # Hierarchy
 
 ```text
-Throwable
+Throwable (class implements Serializable)
 │
-├── Error
+├── Error (class)
 │     ├── OutOfMemoryError
 │     └── StackOverflowError
 │
-└── Exception
+└── Exception (class)
       │
       ├── RuntimeException
       │     ├── NullPointerException
